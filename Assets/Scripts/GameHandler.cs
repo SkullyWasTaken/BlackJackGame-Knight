@@ -1,18 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] GameObject startPanel;
+    [SerializeField] GameObject gamePanel;
+    [SerializeField] GameObject endPanel;
+    [SerializeField] GameObject instructionPanel;
+
+    public void OnStartButtonClick()
     {
-        
+        startPanel.SetActive(false);
+        gamePanel.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnInstructionButtonClick()
     {
-        
+        startPanel.SetActive(false);
+        instructionPanel.SetActive(true);
+    }
+
+    public void OnMainMenuButtonClick()
+    {
+        instructionPanel.SetActive(false);
+        startPanel.SetActive(true);
+    }
+    public void OnQuitButtonClick()
+    {
+        Application.Quit();
     }
 }
