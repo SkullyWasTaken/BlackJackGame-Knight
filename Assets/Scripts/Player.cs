@@ -1,30 +1,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//////////////////////////////////////////////
+//Assignment/Lab/Project: Black Jack Game
+//Name: Isiah Knight
+//Section: SGD.213.2172
+//Instructor: Mr. Sowers 
+//Date: 03/04/2024
+/////////////////////////////////////////////
+
 public class Player 
 {
     private int totalhandSize;
-    List<int> currentHand = new List<int>() {0, 0, 0, 0, 0};
+    protected List<int> currentHand = new List<int>() {0, 0, 0, 0, 0};
     
-    public void AddCard(int card)
+    public virtual void AddCard(int card)
     {
-        // for(int i = 0; currentHand.Count > i; i++)
+        currentHand.Add(card);
+    }
+
+    public class Human : Player
+    {
+        public List<int> humanHand = new List<int>();
+        public override void AddCard(int card)
+        {
+            humanHand.Add(card);
+        }
+
+        // public int GetHumanHandSum()
         // {
-        //     if(currentHand[i] <= 0)
-        //     {
-        //         card = Random.Range(1, 51);
-        //     }   
+        //     // return humanHand.Sum();
         // }
     }
 
-    public class Human
+    public class Computer : Player
     {
-        
-    }
+        public List<int> computerHand = new List<int>();
+        public override void AddCard(int card)
+        {
+            computerHand.Add(card);
+        }
 
-    public class Computer
-    {
-        
+        // public void GetComputerHandSum()
+        // {
+        //     // return computerHand.Sum();
+        // }
     }
 
 }
