@@ -9,42 +9,38 @@ using UnityEngine;
 //Date: 03/04/2024
 /////////////////////////////////////////////
 
-public class Player 
+public class Player
 {
     private int totalhandSize;
-    protected List<int> currentHand = new List<int>() {0, 0, 0, 0, 0};
-    
-    public virtual void AddCard(int card)
+    protected List<Card> hand = new List<Card>();
+
+    public virtual void AddCard(Card card)
     {
-        currentHand.Add(card);
+        hand.Add(card);
     }
 
     public class Human : Player
     {
-        public List<int> humanHand = new List<int>();
-        public override void AddCard(int card)
+        public List<Card> humanHand = new List<Card>();
+        public override void AddCard(Card card)
         {
             humanHand.Add(card);
         }
 
-        // public int GetHumanHandSum()
-        // {
-        //     // return humanHand.Sum();
-        // }
+        public int GetHandValue()
+        {
+            return 0;
+        }
     }
 
     public class Computer : Player
     {
-        public List<int> computerHand = new List<int>();
-        public override void AddCard(int card)
+        public List<Card> computerHand = new List<Card>();
+        public override void AddCard(Card card)
         {
             computerHand.Add(card);
         }
-
-        // public void GetComputerHandSum()
-        // {
-        //     // return computerHand.Sum();
-        // }
     }
-
 }
+
+
