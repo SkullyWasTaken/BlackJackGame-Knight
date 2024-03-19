@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+//////////////////////////////////////////////
+//Assignment/Lab/Project: Black Jack Game
+//Name: Isiah Knight
+//Section: SGD.213.2172
+//Instructor: Mr. Sowers 
+//Date: 03/04/2024
+/////////////////////////////////////////////
 public class Deck 
 {
     private List<Card> cards;

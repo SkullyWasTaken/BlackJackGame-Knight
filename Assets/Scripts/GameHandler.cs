@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //////////////////////////////////////////////
 //Assignment/Lab/Project: Black Jack Game
@@ -21,16 +22,28 @@ public class GameHandler : MonoBehaviour
     [SerializeField] GameObject titleText;
     [SerializeField] TMPro.TextMeshProUGUI endText;
     [SerializeField] TMPro.TextMeshProUGUI outputText;
+    [SerializeField] TMPro.TextMeshProUGUI playerhandText;
     [SerializeField] private Image[] cardImages;
-    [SerializeField] private Dictionary<string, Sprite> cardSprites;
+    [SerializeField] private Sprite cardBack;
     
-
+    private Deck deck;
     private Player.Human newHuman;
     private Player.Computer newComputer;
     private HashSet<Card> dealtCards;
 
+    public void Start()
+    {
+        deck = new Deck();
+    }
+
     public void OnStartButtonClick()
     {
+
+        newHuman = new Player.Human();
+        newComputer = new Player.Computer();
+        dealtCards = new HashSet<Card>();
+
+
         startPanel.SetActive(false);
         gamePanel.SetActive(true);
         DealHands(2);
@@ -62,18 +75,14 @@ public class GameHandler : MonoBehaviour
     public void OnStandButtonClick()
     {
         CompareHands();
-        gamePanel.SetActive(false);
-        endPanel.SetActive(true);
-        titleText.SetActive(false);
     }
 
+    public void OnRestartButtonClick()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     public void DealHands(int p)
     {
-        Deck deck = new Deck();
-        newHuman = new Player.Human();
-        newComputer = new Player.Computer();
-        dealtCards = new HashSet<Card>();
-
         int i = 0;
         while (i < p)
         {
@@ -86,11 +95,13 @@ public class GameHandler : MonoBehaviour
                 {
                     newHuman.AddCard(randCard);
                     dealtCards.Add(randCard);
-                    // UpdateCardImage(newHuman.humanHand.Count -1, randCard);
+                    if(newHuman.GetHandValue() > 21)
+                    {
+                        CompareHands();
+                        return;
+                    }
+                    outputText.text = $"Total: {newHuman.GetHandValue()}";
                     i++;
-
-                    int totalvalue = GetHandValue(newHuman.humanHand);
-                    outputText.text = $"Total: {totalvalue}";
                 }
 
                 if (!dealtCards.Contains(randComputerCard))
@@ -103,23 +114,17 @@ public class GameHandler : MonoBehaviour
             {
                 outputText.text = "You have a full hand!";
                 dealButton.SetActive(false);
-                break; 
+                break;
             }
         }
-        Debug.Log("Human hand is " + string.Join(", ", newHuman.humanHand));
+        playerhandText.text = "Human hand is \n" + string.Join(", ", newHuman.humanHand);
         Debug.Log("Computer hand is " + string.Join(", ", newComputer.computerHand));
     }
 
-    // private void UpdateCardImage(int index, Card card)
-    // {
-    //     string cardName = $"{card.Value}_{card.Suit}";
-    //     cardImages[index].sprite = cardSprites[cardName];
-    // }
-
     public void CompareHands()
     {
-        int humanTotal = GetHandValue(newHuman.humanHand);
-        int computerTotal = GetHandValue(newComputer.computerHand);
+        int humanTotal = newHuman.GetHandValue();
+        int computerTotal = newComputer.GetHandValue();
 
         if (humanTotal > 21 && computerTotal > 21)
         {
@@ -127,59 +132,52 @@ public class GameHandler : MonoBehaviour
         }
         else if (humanTotal > 21)
         {
-            endText.text = "Computer wins! " + humanTotal + " > " + computerTotal;
+            endText.text = "Player bust! Human total is " + humanTotal + " Computer total is " + computerTotal;
         }
         else if (computerTotal > 21)
         {
-            endText.text = "Player wins! " + humanTotal + " < " + computerTotal;
+            endText.text = "House busts! Human total is " + humanTotal + " Computer total is " + computerTotal;
         }
         else if (humanTotal == computerTotal)
         {
-            endText.text = "It's a tie!";
+            endText.text = "It's a tie! Human total is " + humanTotal + " Computer total is " + computerTotal;
         }
         else if (humanTotal > computerTotal)
         {
-            endText.text = "Player wins! " + humanTotal + " > " + computerTotal;
+            endText.text = "Player wins! Human total is " + humanTotal + " Computer total is " + computerTotal;
         }
         else
         {
-            endText.text = "Computer wins! " + humanTotal + " < " + computerTotal;
+            endText.text = "Computer wins! Human total is " + humanTotal + " Computer total is " + computerTotal;
         }
+
+        gamePanel.SetActive(false);
+        endPanel.SetActive(true);
+        titleText.SetActive(false);
     }
 
-    private int GetHandValue(List<Card> hand)
-    {
-        int total = 0;
-        int aceCount = 0;
+    // private void UpdateCardImages(List<Card> hand)
+    // {
+    //     for (int i = 0; i < hand.Count; i++)
+    //     {
+    //         cardImages[i].sprite =  GetCardSprite(hand[i]);
+    //     }
+    //     for (int i = hand.Count; i < cardImages.Length; i++)
+    //     {
+    //         cardImages[i].sprite = cardBack;
+    //     }
+    // }
 
-        foreach (Card card in hand)
-        {
-            if (card.Value == "Jack" || card.Value == "Queen" || card.Value == "King")
-            {
-                total += 10;
-            }
-            else if (card.Value == "Ace")
-            {
-                aceCount++;
-            }
-            else
-            {
-                total += int.Parse(card.Value);
-            }
-        }
-
-        for (int i = 0; i < aceCount; i++)
-        {
-            if (total + 11 <= 21)
-            {
-                total += 11;
-            }
-            else
-            {
-                total += 1;
-            }
-        }
-
-        return total;
-    }
+    // private Sprite GetCardSprite(string cardName)
+    // {
+    //     if( cardSprites.ContainsKey(cardName))
+    //     {
+    //         return cardSprites[cardName];
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError($"Sprite for card {cardName} not found!");
+    //         return null;
+    //     }
+    // }
 }
